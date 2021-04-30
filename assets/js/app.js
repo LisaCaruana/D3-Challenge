@@ -39,14 +39,14 @@ d3.csv('data/data.csv').then(function(data){
   console.log(data)
 })
 // // Initial Params
-var chosenXAxis = "Poverty";
+var chosenXAxis = "poverty";
 
 // function to create scale for x axis () accepts two arguments: array and range
 function xScale(data, chosenXAxis) {
   // create scales
   var xLinearScale = d3.scaleLinear()
-      .domain([d3.min(data, d => d[chosenXAxis]) * 0.5,
-      d3.max(data, d => d[chosenXAxis]) * 1.0
+      .domain([d3.min(data, d => d[chosenXAxis]) * .90,
+      d3.max(data, d => d[chosenXAxis]) * 1.05
     ])
     .range([0, width]);
 
@@ -81,24 +81,40 @@ function updateToolTip(chosenXAxis, circlesGroup) {
 
   var label;
 
-  if (chosenXAxis === "Poverty") {
+  if (chosenXAxis === "poverty") {
     label = "% in Poverty:";
   }
   else {
     label = "Age:";
   }
 
+  // var circleText = circlesGroup.append("g"
+  //   .selectAll('.stateText')
+  //   .data(data)
+  //   .enter()
+  //   .append("text")
+  //   .text(d=>d.abbr)
+  //   .attr("text-anchor", "middle")
+  //   .attr("alignment-baseline", "central")
+
+  //   );
+
   var toolTip = d3.tip()
     .attr("class", "tooltip")
-    .offset([80, -60])
+    // .selectAll(circlesGroup)
+    // .enter()
+    // .append("circle")
+      // .offset([80, -60])
+    .attr("text-anchor", "middle")
+    .attr("alignment-baseline", "central")
     .html(function(d) {
-      return (`${d.data}<br>${label} ${d[chosenXAxis]}`);
+      return (`${d.abbr}<br> ${d[chosenXAxis]}%`);
     });
 
   circlesGroup.call(toolTip);
 
   circlesGroup.on("mouseover", function(data) {
-    toolTip.show(data);
+    toolTip.show(data, this);
   })
     // create on-mouseout event
     .on("mouseout", function(data, index) {
@@ -126,7 +142,7 @@ d3.csv("../data/data.csv").then(function(data, err) {
 
   // Create y scale function
   var yLinearScale = d3.scaleLinear()
-    .domain([d3.extent(data, d => d.healthcare)])
+    .domain(d3.extent(data, d => d.healthcare))
     .range([height, 0]);
 
   // Create initial axis functions
@@ -198,7 +214,7 @@ d3.csv("../data/data.csv").then(function(data, err) {
 
         // functions here found above csv import
         // updates x scale for new data
-        xLinearScale = xScale(hairData, chosenXAxis);
+        xLinearScale = xScale(data, chosenXAxis);
 
         // updates x axis with transition
         xAxis = renderAxes(xLinearScale, xAxis);
@@ -210,7 +226,7 @@ d3.csv("../data/data.csv").then(function(data, err) {
         circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
 
         // changes classes to change bold text
-        if (chosenXAxis === "data") {
+        if (chosenXAxis === "poverty") {
           povertyLabel
             .classed("active", true)
             .classed("inactive", false);
