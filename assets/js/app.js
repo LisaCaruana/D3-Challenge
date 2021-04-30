@@ -1,7 +1,7 @@
-// // @TODO: YOUR CODE HERE!
 // Set Chart size 
 var svgWidth = 960;
 var svgHeight = 500;
+
 // Set margins for chart 
 var margin = {
   top: 20,
@@ -14,21 +14,19 @@ var margin = {
 var width = svgWidth - margin.left - margin.right;
 var height = svgHeight - margin.top - margin.bottom;
 
-// // Create an SVG wrapper, append an SVG group that will hold our chart,
-// // and shift the latter by left and top margins.
-
-//D3 looks for something in the class chart and appends an svg image
+// Create an SVG wrapper, append an SVG group that will hold our chart and shift the latter by left and top margins.
+// D3 looks for something in the class chart and appends an svg image
 var svg = d3
   .select("#scatter")
   .append("svg")
   .attr("width", svgWidth)
   .attr("height", svgHeight);
 
-// // Append an SVG group
+// Append an SVG group
 var chartGroup = svg.append("g")
   .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-
+// Load the data.csv file and append to chart
 d3.csv('data/data.csv').then(function(data){
   chartGroup.select('circle')
             .data(data)
@@ -38,10 +36,11 @@ d3.csv('data/data.csv').then(function(data){
             .attr('r', 50)
   console.log(data)
 })
-// // Initial Params
+
+// Set parameters for two different X axis 
 var chosenXAxis = "poverty";
 
-// function to create scale for x axis () accepts two arguments: array and range
+// The function to create a scale for x axis () accepts two arguments: array and range
 function xScale(data, chosenXAxis) {
   // create scales
   var xLinearScale = d3.scaleLinear()
@@ -49,24 +48,21 @@ function xScale(data, chosenXAxis) {
       d3.max(data, d => d[chosenXAxis]) * 1.05
     ])
     .range([0, width]);
-
   return xLinearScale;
-
 }
 
-// function to create axis of the new scale and then calling it on axis transition
+// Create function to create second x axis and call it on axis transition
 function renderAxes(newXScale, xAxis) {
   var bottomAxis = d3.axisBottom(newXScale);
 
   xAxis.transition()
     .duration(1000) //1 second
     .call(bottomAxis);
-
   return xAxis;
 }
 
-// function for after transition happens, moves circle group from one scale to the other
-// new circles - line 74 says move the center of each circle to the new location
+// This function is for after transition happens and moves the circle group from one scale to the other
+// Line 74 moves the center of each circle to the new location when X axis parameters are changed
 function renderCircles(circlesGroup, newXScale, chosenXAxis) {
 
   circlesGroup.transition()
@@ -76,7 +72,7 @@ function renderCircles(circlesGroup, newXScale, chosenXAxis) {
   return circlesGroup;
 }
 
-// function used for updating circles group with new tooltip
+// Create function used for updating circles group with new tooltip
 function updateToolTip(chosenXAxis, circlesGroup) {
 
   var label;
@@ -88,23 +84,8 @@ function updateToolTip(chosenXAxis, circlesGroup) {
     label = "Age:";
   }
 
-  // var circleText = circlesGroup.append("g"
-  //   .selectAll('.stateText')
-  //   .data(data)
-  //   .enter()
-  //   .append("text")
-  //   .text(d=>d.abbr)
-  //   .attr("text-anchor", "middle")
-  //   .attr("alignment-baseline", "central")
-
-  //   );
-
   var toolTip = d3.tip()
     .attr("class", "tooltip")
-    // .selectAll(circlesGroup)
-    // .enter()
-    // .append("circle")
-      // .offset([80, -60])
     .attr("text-anchor", "middle")
     .attr("alignment-baseline", "central")
     .html(function(d) {
@@ -149,17 +130,17 @@ d3.csv("../data/data.csv").then(function(data, err) {
   var bottomAxis = d3.axisBottom(xLinearScale);
   var leftAxis = d3.axisLeft(yLinearScale);
 
-  // append x axis
+  // Append x axis
   var xAxis = chartGroup.append("g")
     .classed("x-axis", true)
     .attr("transform", `translate(0, ${height})`)
     .call(bottomAxis);
 
-  // append y axis
+  // Append y axis
   chartGroup.append("g")
     .call(leftAxis);
 
-  // append initial circles
+  // Append initial circles
   var circlesGroup = chartGroup.selectAll("circle")
     .data(data) //iterates through data
     .enter() //creates a placeholder
@@ -169,6 +150,10 @@ d3.csv("../data/data.csv").then(function(data, err) {
     .attr("r", 20)
     .attr("fill", "green")
     .attr("opacity", ".5");
+    // .append("text")
+    // .text(d=>d.abbr)
+    // .attr("text-anchor", "middle")
+    // .attr("alignment-baseline", "central");
 
   // Create group for two x-axis labels
   var labelsGroup = chartGroup.append("g")
@@ -188,7 +173,7 @@ d3.csv("../data/data.csv").then(function(data, err) {
     .classed("inactive", true)
     .text("Age");
 
-  // append y axis  determines location of y axis label, rotates words to vertical 
+  // Append y axis - this determines location of y axis label and rotates words to vertical 
   chartGroup.append("text")
     .attr("transform", "rotate(-90)")
     .attr("y", 0 - margin.left)
@@ -197,10 +182,10 @@ d3.csv("../data/data.csv").then(function(data, err) {
     .classed("axis-text", true)
     .text("% with Healthcare");
 
-  // updateToolTip function above csv import
+  // Update ToolTip function above csv import
   var circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
 
-  // x axis labels event listener
+  // Create x axis labels event listener
   labelsGroup.selectAll("text")
     .on("click", function() {
       // get value of selection
@@ -248,3 +233,22 @@ d3.csv("../data/data.csv").then(function(data, err) {
   console.log(error);
 });
 
+
+
+
+// .selectAll(circlesGroup)
+// .data(data)
+// .enter()
+// .append("circle")
+  // .offset([80, -60])
+  
+  // var circleText = circlesGroup.append("g"
+  //   .selectAll('.stateText')
+  //   .data(data)
+  //   .enter()
+  //   .append("text")
+  //   .text(d=>d.abbr)
+  //   .attr("text-anchor", "middle")
+  //   .attr("alignment-baseline", "central")
+
+  //   );
