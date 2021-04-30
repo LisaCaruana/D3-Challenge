@@ -112,7 +112,7 @@ function updateToolTip(chosenXAxis, circlesGroup) {
 // The .then means wait for the data to be fulfilled before doing anything
 d3.csv("../data/data.csv").then(function(data, err) {
   if (err) throw err; //error message if too much time passes
-
+  console.log(data)
   // parse data - CSV's always return string values, need to typecast data
   data.forEach(function(data) {
     data.poverty = +data.poverty;
@@ -126,7 +126,7 @@ d3.csv("../data/data.csv").then(function(data, err) {
 
   // Create y scale function
   var yLinearScale = d3.scaleLinear()
-    .domain([0, d3.max(data, d => d.healthcare)])
+    .domain([d3.extent(data, d => d.healthcare)])
     .range([height, 0]);
 
   // Create initial axis functions
