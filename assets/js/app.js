@@ -107,7 +107,7 @@ function updateToolTip(chosenXAxis, circlesGroup) {
 
 // Retrieve data from the CSV file and execute the functions, nothing has been called yet
 // The .then means wait for the data to be fulfilled before doing anything
-d3.csv("../data/data.csv").then(function(data, err) {
+d3.csv("data/data.csv").then(function(data, err) {
   if (err) throw err; //error message if too much time passes
   console.log(data)
   // parse data - CSV's always return string values, need to typecast data
@@ -155,6 +155,19 @@ d3.csv("../data/data.csv").then(function(data, err) {
     // .attr("text-anchor", "middle")
     // .attr("alignment-baseline", "central");
 
+  var stateLabels =  circlesGroup.selectAll(".stateText")
+    .data(data)
+    .enter()
+    .append("text")
+    .text( d => (d.abbr))
+    .attr("dx", d => xLinearScale(d.poverty))
+    .attr("dy", d=> yLinearScale(d.healthcare))
+    // .attr("cx", "cy")
+    .attr("text-anchor", "middle")
+    .attr("alignment-baseline", "central")
+      // return(circlesGroup.stateText)
+    // .attr("dx"=>"text")
+     
   // Create group for two x-axis labels
   var labelsGroup = chartGroup.append("g")
     .attr("transform", `translate(${width / 2}, ${height + 20})`);
@@ -234,7 +247,7 @@ d3.csv("../data/data.csv").then(function(data, err) {
 });
 
 
-
+// Call
 
 // .selectAll(circlesGroup)
 // .data(data)
