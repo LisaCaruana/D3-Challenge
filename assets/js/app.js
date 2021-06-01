@@ -155,7 +155,7 @@ d3.csv("data/data.csv").then(function(data, err) {
     // .attr("text-anchor", "middle")
     // .attr("alignment-baseline", "central");
 
-  var stateLabels =  circlesGroup.selectAll(".stateText")
+  var stateLabels =  circlesGroup.select("text")
     .data(data)
     .enter()
     .append("text")
